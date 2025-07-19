@@ -27,6 +27,13 @@ builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
 var app = builder.Build();
 
+// Apply pending migrations
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 

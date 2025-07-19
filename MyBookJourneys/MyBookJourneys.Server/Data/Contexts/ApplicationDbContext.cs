@@ -42,9 +42,6 @@ namespace MyBookJourneys.Server.Data.Contexts
                 entity.Property(e => e.CoverImageUrl)
                     .HasMaxLength(500);
                 
-                entity.Property(e => e.Rating)
-                    .HasPrecision(3, 2);
-                
                 entity.Property(e => e.CreatedAt)
                     .HasDefaultValueSql("GETUTCDATE()");
 
