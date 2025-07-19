@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(dotnet add package:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

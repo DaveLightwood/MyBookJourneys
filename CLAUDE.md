@@ -144,6 +144,13 @@ src/features/[feature-name]/
 4. **Direct Imports**: Avoid barrel files (index.js) for better tree-shaking
 5. **Feature Independence**: Each feature should be self-contained and removable
 
+
+### React Frameworks
+- Routing: React Router
+- Application State: React Redux for state management
+- Server Cashe State: Redux RTK for server state management
+- Form State: Formik
+
 ### Example Feature Structure for Books
 ```
 src/features/books/
