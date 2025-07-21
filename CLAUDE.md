@@ -173,3 +173,56 @@ src/features/books/
 - Compose features at the application level (in `app/routes`)
 - Use ESLint rules to enforce architectural constraints
 - Consider using tools like `eslint-plugin-boundaries` to prevent cross-feature imports
+
+## Authentication Configuration (Microsoft Entra External ID)
+
+The application uses Microsoft Entra External ID for authentication. Both frontend and backend are configured to work together seamlessly.
+
+### Frontend Configuration
+Update `/MyBookJourneys/mybookjourneys.client/.env` with your External ID values:
+```
+VITE_AZURE_CLIENT_ID=your-application-client-id
+VITE_AZURE_TENANT_ID=your-tenant-id-guid  
+VITE_AZURE_TENANT_SUBDOMAIN=your-tenant-subdomain
+VITE_API_BASE_URL=https://localhost:7196
+```
+
+### Backend Configuration
+Update `/MyBookJourneys/MyBookJourneys.Server/appsettings.Development.json`:
+```json
+"EntraExternalId": {
+    "Instance": "https://your-tenant-subdomain.ciamlogin.com/",
+    "TenantId": "your-tenant-id",
+    "ClientId": "your-client-id",
+    "Domain": "your-tenant-subdomain.onmicrosoft.com",
+    "Scopes": "access_as_user",
+    "CallbackPath": "/signin-oidc"
+}
+```
+
+### Required Azure Configuration
+1. **App Registration**: Create an app registration in your External ID tenant
+2. **Redirect URIs**: Add `https://localhost:5173` for the React app
+3. **API Permissions**: Expose an API with scope `access_as_user`
+4. **Authentication**: Enable implicit flow for ID tokens (for SPA)
+5. **Token Configuration**: Add optional claims if needed (email, name)
+
+### Authentication Flow
+- Frontend uses MSAL React to authenticate users via popup or redirect
+- Backend validates JWT tokens from External ID using Microsoft.Identity.Web
+- Protected endpoints require `[Authorize]` attribute
+- User info available via `ClaimsPrincipalExtensions` helper methods
+- CORS is configured to allow the React frontend to call the API
+
+### Key Integration Points
+1. **Token Acquisition**: Frontend uses `useAuthApi` hook to get access tokens
+2. **API Calls**: Include bearer token in Authorization header
+3. **Protected Routes**: Use `AuthWrapper` component to protect React routes
+4. **User Context**: Access user info via MSAL's account object
+
+### Testing Authentication
+1. Ensure both frontend and backend are running
+2. Click login button in React app
+3. Complete External ID sign-in flow
+4. Token should be automatically included in API requests
+5. Check Swagger UI with bearer token for testing protected endpoints

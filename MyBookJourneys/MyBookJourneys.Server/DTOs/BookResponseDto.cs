@@ -13,6 +13,8 @@ namespace MyBookJourneys.Server.DTOs
         public string? Description { get; set; }
         public string? CoverImageUrl { get; set; }
         public decimal? Rating { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public string? UserName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

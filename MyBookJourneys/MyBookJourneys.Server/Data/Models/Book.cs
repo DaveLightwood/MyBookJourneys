@@ -35,6 +35,13 @@ namespace MyBookJourneys.Server.Data.Models
 
         public decimal? Rating { get; set; }
 
+        [Required]
+        [StringLength(128)]
+        public string UserId { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        public string? UserName { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

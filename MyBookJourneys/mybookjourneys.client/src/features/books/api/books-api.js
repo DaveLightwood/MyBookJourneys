@@ -1,10 +1,17 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { authBaseQuery } from '../../../lib/auth-base-query';
 
 export const booksApi = createApi({
   reducerPath: 'booksApi',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: '/api/v1.0/books',
-  }),
+  baseQuery: async (args, api, extraOptions) => {
+    // Adjust the URL to include the /api/v1.0/books prefix
+    if (typeof args === 'string') {
+      args = `/api/v1.0/books${args}`;
+    } else {
+      args.url = `/api/v1.0/books${args.url}`;
+    }
+    return authBaseQuery(args, api, extraOptions);
+  },
   tagTypes: ['Book'],
   endpoints: (builder) => ({
     getBooks: builder.query({

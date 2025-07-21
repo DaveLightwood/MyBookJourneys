@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@azure/msal-browser": "^4.15.0",
+    "@azure/msal-react": "^3.0.15",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
     "formik": "^2.4.6",

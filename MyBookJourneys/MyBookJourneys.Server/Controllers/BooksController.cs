@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBookJourneys.Server.Data.Interfaces;
 using MyBookJourneys.Server.Data.Models;
 using MyBookJourneys.Server.Services.Interfaces;
+using MyBookJourneys.Server.Extensions;
 
 namespace MyBookJourneys.Server.Controllers
 {
@@ -55,6 +57,7 @@ namespace MyBookJourneys.Server.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Book>> Create([FromBody] Book book)
         {
             try
@@ -73,6 +76,10 @@ namespace MyBookJourneys.Server.Controllers
                     }
                 }
 
+                // Set user information from the authenticated user
+                book.UserId = User.GetUserId();
+                book.UserName = User.GetUserName();
+
                 var createdBook = await _bookRepository.AddAsync(book);
                 return CreatedAtAction(nameof(GetById), new { id = createdBook.Id }, createdBook);
             }
@@ -84,6 +91,7 @@ namespace MyBookJourneys.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] Book book)
         {
             try
@@ -104,6 +112,12 @@ namespace MyBookJourneys.Server.Controllers
                     return NotFound($"Book with ID {id} not found");
                 }
 
+                // Check if the user owns this book
+                if (existingBook.UserId != User.GetUserId())
+                {
+                    return Forbid("You are not authorized to update this book");
+                }
+
                 if (!string.IsNullOrEmpty(book.ISBN) && book.ISBN != existingBook.ISBN)
                 {
                     var bookWithISBN = await _bookRepository.GetBookByISBNAsync(book.ISBN);
@@ -112,6 +126,10 @@ namespace MyBookJourneys.Server.Controllers
                         return Conflict($"Another book with ISBN {book.ISBN} already exists");
                     }
                 }
+
+                // Preserve original user information
+                book.UserId = existingBook.UserId;
+                book.UserName = existingBook.UserName;
 
                 await _bookRepository.UpdateAsync(book);
                 return NoContent();
@@ -124,6 +142,7 @@ namespace MyBookJourneys.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -132,6 +151,12 @@ namespace MyBookJourneys.Server.Controllers
                 if (book == null)
                 {
                     return NotFound($"Book with ID {id} not found");
+                }
+
+                // Check if the user owns this book
+                if (book.UserId != User.GetUserId())
+                {
+                    return Forbid("You are not authorized to delete this book");
                 }
 
                 await _bookRepository.DeleteAsync(book);
@@ -264,6 +289,7 @@ namespace MyBookJourneys.Server.Controllers
         }
 
         [HttpPost("{id}/image")]
+        [Authorize]
         public async Task<IActionResult> UploadBookImage(int id, IFormFile image)
         {
             try
@@ -318,6 +344,7 @@ namespace MyBookJourneys.Server.Controllers
         }
 
         [HttpDelete("{id}/image")]
+        [Authorize]
         public async Task<IActionResult> DeleteBookImage(int id)
         {
             try

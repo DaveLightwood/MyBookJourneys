@@ -20,6 +20,8 @@ namespace MyBookJourneys.Server.Extensions
                 Description = book.Description,
                 CoverImageUrl = book.CoverImageUrl,
                 Rating = book.Rating,
+                UserId = book.UserId,
+                UserName = book.UserName,
                 CreatedAt = book.CreatedAt,
                 UpdatedAt = book.UpdatedAt
             };

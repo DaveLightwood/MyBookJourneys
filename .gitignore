@@ -8,3 +8,9 @@
 /MyBookJourneys/MyBookJourneys.Server/bin/Debug/net8.0
 /MyBookJourneys/MyBookJourneys.Server/obj
 /MyBookJourneys/MyBookJourneys.Server/appsettings.json
+
+# Environment variables
+.env
+.env.local
+*.env
+/MyBookJourneys/MyBookJourneys.Server/appsettings.Development.json
